@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sevimlilar — DOSS_UZ</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#14100d">
+  <link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="wrap">
+      <header class="page-head">
+        <nav class="crumbs" aria-label="Yo‘l"><a href="/">Bosh sahifa</a><span>/</span><span>Sevimlilar</span></nav>
+        <h1 class="serif">Sevimlilar</h1>
+        <p id="lead"></p>
+      </header>
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty" hidden>
+        <h2 class="serif">Hozircha bo‘sh</h2>
+        <p>Yoqqan modellarni yurakcha belgisi bilan saqlab qo‘ying — ular shu yerda turadi.</p>
+        <a class="btn btn-dark" href="/catalog">Katalogga o‘tish</a>
+      </div>
+      <div style="height:90px"></div>
+    </div>
+  </main>
+  <script type="module">
+    import { $, api, card, favs, mountLayout, skeletonCards } from "/js/core.js";
+    mountLayout();
+
+    async function load() {
+      if (!favs.ids.length) {
+        $("#grid").innerHTML = "";
+        $("#lead").textContent = "";
+        $("#empty").hidden = false;
+        return;
+      }
+      $("#empty").hidden = true;
+      if (!$("#grid").children.length) $("#grid").innerHTML = skeletonCards(Math.min(favs.ids.length, 8));
+      try {
+        const { items } = await api(`/products?ids=${favs.ids.join(",")}`);
+        $("#grid").innerHTML = items.map(card).join("");
+        $("#lead").textContent = `${items.length} ta model saqlangan`;
+        $("#empty").hidden = items.length > 0;
+      } catch {
+        $("#grid").innerHTML = '<p class="muted">Yuklab bo‘lmadi. Sahifani yangilab ko‘ring.</p>';
+      }
+    }
+    document.addEventListener("favs:change", load);
+    load();
+  </script>
+</body>
+</html>

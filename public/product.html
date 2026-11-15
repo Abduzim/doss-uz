@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DOSS_UZ</title>
+  <meta name="theme-color" content="#14100d">
+  <link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="wrap" id="view" style="padding-top:22px">
+      <div class="product">
+        <div class="gallery"><div class="shot skeleton"></div><div class="shot skeleton"></div></div>
+        <div class="info"><div class="skeleton" style="height:44px;width:70%"></div><div class="skeleton" style="height:22px;width:40%;margin-top:16px"></div></div>
+      </div>
+    </div>
+
+    <section class="section" id="related" data-rail hidden>
+      <div class="wrap section-head">
+        <h2 class="serif">Sizga yoqishi mumkin</h2>
+        <div class="tools">
+          <button class="round-btn" type="button" data-prev aria-label="Orqaga"></button>
+          <button class="round-btn" type="button" data-next aria-label="Oldinga"></button>
+        </div>
+      </div>
+      <div class="rail no-scrollbar"></div>
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="Rasmni kattalashtirish">
+    <img alt="">
+    <button class="x" type="button" aria-label="Yopish"></button>
+    <button class="prev" type="button" aria-label="Oldingi"></button>
+    <button class="next" type="button" aria-label="Keyingi"></button>
+    <span class="n"></span>
+  </div>
+  <script type="module" src="/js/product.js"></script>
+</body>
+</html>

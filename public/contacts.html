@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Do‘kon va aloqa — DOSS_UZ</title>
+  <meta name="description" content="Doss_uz do‘koni: Toshkent, Shayxontohur tumani, Nurafshon ko‘chasi, Sarguzasht 55. Har kuni 11:00–23:00. Tel: +998 99 640 16 11.">
+  <meta name="theme-color" content="#14100d">
+  <link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="wrap">
+      <header class="page-head">
+        <nav class="crumbs" aria-label="Yo‘l"><a href="/">Bosh sahifa</a><span>/</span><span>Do‘kon</span></nav>
+        <h1 class="serif">Do‘kon va aloqa</h1>
+        <p>Modellarni jonli ko‘rish va kiyib ko‘rish uchun do‘konimizga tashrif buyuring yoki qo‘ng‘iroq qiling.</p>
+      </header>
+      <div class="contact-grid" id="cards"></div>
+    </div>
+    <div class="map-frame" id="map"></div>
+  </main>
+  <script type="module">
+    import { $, esc, mountLayout, site } from "/js/core.js";
+    mountLayout({ active: "contacts" });
+
+    const maps = `https://maps.google.com/maps?q=${site.lat},${site.lng}`;
+    $("#cards").innerHTML = `
+      <div>
+        <div class="kicker">Manzil</div>
+        <b>${esc(site.address)}</b>
+        <p>${esc(site.city)}. ${esc(site.landmark)}.</p>
+        <p><a class="underline" href="${maps}" target="_blank" rel="noopener">Xaritada ochish</a></p>
+      </div>
+      <div>
+        <div class="kicker">Ish vaqti</div>
+        <b>11:00 – 23:00</b>
+        <p>Har kuni, dam olish kunisiz.</p>
+      </div>
+      <div>
+        <div class="kicker">Telefon</div>
+        <b><a href="${site.phoneHref}">${esc(site.phone)}</a></b>
+        <p>Buyurtma va razmer bo‘yicha maslahat.</p>
+      </div>
+      <div>
+        <div class="kicker">Telegram</div>
+        <b><a href="${site.telegram}" target="_blank" rel="noopener">${esc(site.telegramHandle)}</a></b>
+        <p>Yangi modellar birinchi bo‘lib kanalimizda chiqadi. ${esc(site.delivery)}.</p>
+      </div>`;
+    $("#map").innerHTML = `<iframe title="Doss_uz do‘koni xaritada" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+      src="https://www.google.com/maps?q=${site.lat},${site.lng}&z=16&output=embed"></iframe>`;
+  </script>
+</body>
+</html>

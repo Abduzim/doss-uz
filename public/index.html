@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DOSS_UZ — erkaklar uchun premium kiyimlar</title>
+  <meta name="description" content="Doss_uz — Toshkentdagi erkaklar premium kiyim do‘koni. Dvoyka, pidjak, kardigan, kurtka va kostyumlar. Kuz–Qish 2026–2027 kolleksiyasi, O‘zbekiston bo‘ylab yetkazib berish.">
+  <meta name="theme-color" content="#14100d">
+  <meta property="og:title" content="DOSS_UZ — erkaklar uchun premium kiyimlar">
+  <meta property="og:description" content="Premium sifat va zamonaviy uslub manzili. Kuz–Qish 2026–2027 kolleksiyasi.">
+  <meta property="og:image" content="/media/hero/hero.jpg">
+  <link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main>
+    <section class="hero" aria-label="Yangi kolleksiya">
+      <div class="hero-media">
+        <video muted loop playsinline autoplay preload="auto" poster="/media/hero/hero.jpg" src="/media/hero/hero.mp4"></video>
+      </div>
+      <div class="hero-veil"></div>
+      <div class="hero-copy">
+        <div class="kicker">Kuz–Qish 2026–2027</div>
+        <h1 class="serif">Yangi kolleksiya</h1>
+        <p class="sub">Premium sifat va zamonaviy uslub manzili</p>
+        <div class="actions">
+          <a class="btn btn-light" href="/catalog">Kolleksiyani ko‘rish</a>
+          <a class="btn btn-ghost" href="/catalog?only=new">Yangi kelganlar</a>
+        </div>
+      </div>
+      <div class="hero-note"><span>Toshkent · Nurafshon ko‘chasi</span><span>Har kuni 11:00 – 23:00</span></div>
+      <span class="hero-scroll" aria-hidden="true"></span>
+    </section>
+
+    <section class="story">
+      <div class="wrap">
+        <div class="media reveal"><img src="/media/photo/p23.jpg" alt="Doss_uz shers pidjagi" loading="lazy"></div>
+        <div class="text reveal" style="--d:120ms">
+          <div class="kicker" style="opacity:.5">DOSS_UZ · Toshkent</div>
+          <h2 class="serif">Har bir detalda <em>sifat</em> seziladigan kiyimlar</h2>
+          <p>Biz har mavsum eng sara va individual modellarni tanlaymiz: natural shers, drap va HB materiallar, toza bichim va puxta ishlov. Do‘konga keling — kiyib ko‘ring, matosini qo‘lingiz bilan his qiling.</p>
+          <div class="facts" id="facts"></div>
+          <div class="actions">
+            <a class="btn btn-light" href="/catalog">Katalog</a>
+            <a class="btn btn-ghost" href="/contacts">Do‘kon manzili</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-rail>
+      <div class="wrap section-head">
+        <h2 class="serif">Yangi kelganlar</h2>
+        <div class="tools">
+          <button class="round-btn" type="button" data-prev aria-label="Orqaga"></button>
+          <button class="round-btn" type="button" data-next aria-label="Oldinga"></button>
+          <a class="caps underline" href="/catalog?only=new" style="margin-left:8px">Barchasi</a>
+        </div>
+      </div>
+      <div class="rail no-scrollbar" id="new-rail"></div>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 class="serif">Tanlangan modellar</h2>
+          <a class="caps underline" href="/catalog">Butun katalog</a>
+        </div>
+        <div class="grid" id="featured-grid"></div>
+      </div>
+    </section>
+
+    <section class="visit" id="visit"></section>
+  </main>
+  <script type="module" src="/js/home.js"></script>
+</body>
+</html>

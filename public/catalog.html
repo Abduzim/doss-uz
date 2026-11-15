@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Katalog — DOSS_UZ</title>
+  <meta name="description" content="Doss_uz katalogi: dvoyka, kostyum-shim, pidjak, kardigan, kurtka, vetrovka va poyabzallar. Narxlar va razmerlar.">
+  <meta name="theme-color" content="#14100d">
+  <link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="wrap">
+      <header class="page-head">
+        <nav class="crumbs" aria-label="Yo‘l"><a href="/">Bosh sahifa</a><span>/</span><span id="crumb">Katalog</span></nav>
+        <h1 class="serif" id="title">Katalog</h1>
+        <p id="lead"></p>
+      </header>
+
+      <div class="chips no-scrollbar" id="chips"></div>
+
+      <div class="toolbar">
+        <div class="group"><span class="muted" id="count" style="font-size:13px"></span></div>
+        <div class="group">
+          <label class="select"><select id="size" aria-label="Razmer"></select></label>
+          <label class="select"><select id="sort" aria-label="Saralash">
+            <option value="new">Avval yangilari</option>
+            <option value="price_asc">Arzonidan</option>
+            <option value="price_desc">Qimmatidan</option>
+          </select></label>
+          <div class="cols-toggle" id="cols" role="group" aria-label="Ustunlar soni">
+            <button type="button" data-cols="2" aria-label="2 ustun"><i></i><i></i></button>
+            <button type="button" data-cols="3" aria-label="3 ustun"><i></i><i></i><i></i></button>
+            <button type="button" data-cols="4" aria-label="4 ustun"><i></i><i></i><i></i><i></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid" id="grid" data-cols="4"></div>
+      <div class="empty" id="empty" hidden>
+        <h2 class="serif">Hech narsa topilmadi</h2>
+        <p>Filtrlarni o‘zgartirib ko‘ring yoki butun katalogga qayting.</p>
+        <a class="btn btn-dark" href="/catalog">Barcha mahsulotlar</a>
+      </div>
+      <div style="height:90px"></div>
+    </div>
+  </main>
+  <script type="module" src="/js/catalog.js"></script>
+</body>
+</html>

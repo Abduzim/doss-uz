@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Buyurtma berish — DOSS_UZ</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#14100d">
+  <link rel="icon" href="/img/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="page">
+    <div class="wrap" id="view">
+      <header class="page-head">
+        <nav class="crumbs" aria-label="Yo‘l"><a href="/">Bosh sahifa</a><span>/</span><span>Buyurtma</span></nav>
+        <h1 class="serif">Buyurtma berish</h1>
+        <p>Ma’lumotlaringizni qoldiring — menejerimiz qo‘ng‘iroq qilib, buyurtmani tasdiqlaydi.</p>
+      </header>
+
+      <div class="checkout">
+        <form class="form" id="form" novalidate>
+          <div class="two">
+            <div class="field" data-field="customer_name">
+              <label for="name">Ismingiz</label>
+              <input id="name" name="customer_name" autocomplete="name" required maxlength="120">
+            </div>
+            <div class="field" data-field="phone">
+              <label for="phone">Telefon raqam</label>
+              <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998 90 123 45 67" required maxlength="20">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Qabul qilish usuli</label>
+            <div class="switch">
+              <label><input type="radio" name="delivery" value="delivery" checked>Yetkazib berish</label>
+              <label><input type="radio" name="delivery" value="pickup">Do‘kondan olib ketish</label>
+            </div>
+          </div>
+
+          <div id="delivery-fields" class="form">
+            <div class="field" data-field="region">
+              <label for="region">Viloyat</label>
+              <select id="region" name="region"></select>
+            </div>
+            <div class="field" data-field="address">
+              <label for="address">Manzil</label>
+              <input id="address" name="address" autocomplete="street-address" placeholder="Tuman, ko‘cha, uy" maxlength="400">
+            </div>
+          </div>
+          <p class="muted" id="pickup-note" hidden></p>
+
+          <div class="field" data-field="comment">
+            <label for="comment">Izoh (ixtiyoriy)</label>
+            <textarea id="comment" name="comment" maxlength="600" placeholder="Masalan: bo‘yim 178, vaznim 80 — razmerni maslahat bering"></textarea>
+          </div>
+
+          <div class="form-error" id="form-error" role="alert" hidden></div>
+          <button class="btn btn-dark btn-block" type="submit" id="submit">Buyurtmani tasdiqlash</button>
+          <p class="muted" style="font-size:13px">Tugmani bosish orqali siz bilan bog‘lanishimizga rozilik bildirasiz. Yetkazib berish narxi va muddati qo‘ng‘iroqda kelishiladi.</p>
+        </form>
+
+        <aside class="summary" aria-label="Buyurtma tarkibi">
+          <h2 class="serif">Buyurtmangiz</h2>
+          <div id="items"></div>
+          <div class="total-row"><span>Jami</span><b id="total"></b></div>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="/js/checkout.js"></script>
+</body>
+</html>
