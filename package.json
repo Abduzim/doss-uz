@@ -10,8 +10,7 @@
     "media": "node scripts/process-media.js",
     "share": "cloudflared tunnel --url http://localhost:4000",
     "build:cf": "node scripts/build-cf.js",
-    "dev:cf": "npm run build:cf && wrangler dev",
-    "deploy:cf": "npm run build:cf && wrangler deploy"
+    "deploy:cf": "npm run build:cf && wrangler pages deploy --no-bundle --branch main --commit-dirty=true"
   },
   "keywords": [],
   "author": "",

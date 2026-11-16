@@ -4,7 +4,7 @@ Fullstack onlayn do‘kon: katalog, mahsulot sahifasi (video + rasmlar), savat, 
 Katalog Doss_uz Telegram kanali eksportidan tuzilgan (77 ta mahsulot, 98 ta video, 31 ta rasm).
 
 - **Backend:** Node.js, Express 5, PostgreSQL (`pg`), Joi, JWT, multer
-- **Hosting:** Cloudflare Workers — https://doss-uz.school33-web.workers.dev
+- **Hosting:** Cloudflare Pages — https://doss-uz.pages.dev
 - **Frontend:** sof HTML / CSS / JavaScript (ES modullar, build bosqichi yo‘q)
 
 ## Ishga tushirish
@@ -32,7 +32,7 @@ Sozlamalar `.env` faylida (namuna — `.env.example`): baza ulanishi, admin logi
 
 `/admin` — login va parol `.env` dagi `ADMIN_USERNAME` / `ADMIN_PASSWORD`.
 Parolni o‘zgartirish: kompyuterda — `.env` da yangisini yozib serverni qayta yoqing;
-internetdagi sayt uchun — `npx wrangler secret put ADMIN_PASSWORD`.
+internetdagi sayt uchun — `npx wrangler pages secret put ADMIN_PASSWORD --project-name doss-uz`, keyin `npm run deploy:cf`.
 
 - **Buyurtmalar:** ro‘yxat, holatini o‘zgartirish (yangi → tasdiqlangan → yo‘lda → yakunlangan / bekor qilingan).
 - **Mahsulotlar:** qo‘shish, tahrirlash, o‘chirish, yashirish; rasm va video yuklash.
@@ -131,15 +131,16 @@ Link kompyuter yoniq va ikkala buyruq ishlab turgan paytda ochiladi; har safar q
 
 ## Cloudflare'ga joylash (doimiy manzil)
 
-Sayt Cloudflare Workers'da turadi: https://doss-uz.school33-web.workers.dev
+Sayt Cloudflare Pages'da turadi: https://doss-uz.pages.dev
 
 ```bash
 npm run deploy:cf   # yig'adi (dist-cf/) va Cloudflare'ga yuklaydi
-npm run dev:cf      # Cloudflare muhitini kompyuterda sinash (http://localhost:8787, sozlamalar .dev.vars da)
 ```
 
-- Sahifalar, rasmlar va videolar — statik fayllar; `/api/*` — `src/worker.js` orqali shu Express ilovasi.
-- Sirlar `npx wrangler secret put <NOM>` bilan qo'yiladi: `DATABASE_URL`, `JWT_SECRET`, `ADMIN_PASSWORD`.
+- Sahifalar va rasmlar — statik fayllar; `/api/*` va videolar — `src/worker.js` orqali (shu Express ilovasi).
+  Worker qaysi manzillarda ishlashi `dist-cf/site/_routes.json` da (uni `scripts/build-cf.js` yozadi).
+- Sirlar `npx wrangler pages secret put <NOM> --project-name doss-uz` bilan qo'yiladi: `DATABASE_URL`, `JWT_SECRET`, `ADMIN_PASSWORD`.
+  Sir o'zgargach, kuchga kirishi uchun `npm run deploy:cf` ni qayta ishga tushiring.
 - `DATABASE_URL` qo'yilmagan bo'lsa, katalog `src/data/catalog.js` dan o'qiladi (faqat ko'rish);
   buyurtma va admin panel ishlashi uchun baza kerak.
 - Bulutdagi bazani tayyorlash (bir marta): `DATABASE_URL=<neon satri> npm run db:setup && DATABASE_URL=<neon satri> npm run db:seed`

@@ -1,10 +1,12 @@
-// Cloudflare Workers uchun yig'ish:  npm run build:cf
+// Cloudflare Pages uchun yig'ish:  npm run build:cf
 //
 //   dist-cf/site/             — statik fayllar (public/ + kerakli media)
 //   dist-cf/media-sizes.json  — video fayllar hajmi (worker.js Range so'rovlari uchun)
 //
 // Cloudflare bitta fayl uchun 25 MiB chegarasini qo'yadi; undan katta fayllar o'tkazib yuboriladi.
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import { builtinModules } from "node:module";
 import path from "node:path";
 import { products } from "../src/data/catalog.js";
 import { buildMedia } from "../src/data/media.js";
@@ -27,6 +29,17 @@ fs.writeFileSync(path.join(SITE, "js", "site.js"), `export const site = ${JSON.s
 fs.writeFileSync(
   path.join(SITE, "_headers"),
   ["/media/*", "  Cache-Control: public, max-age=2592000", "/fonts/*", "  Cache-Control: public, max-age=31536000, immutable", ""].join("\n")
+);
+
+// Worker faqat shu manzillarda ishlaydi; qolgan hamma narsa to'g'ridan-to'g'ri statik fayl
+// (bepul tarifdagi kunlik so'rov limitiga kirmaydi).
+fs.writeFileSync(
+  path.join(SITE, "_routes.json"),
+  JSON.stringify({
+    version: 1,
+    include: ["/api/*", "/catalog/*", "/media/video/*", "/media/preview/*", "/media/hero/*", "/media/admin/*"],
+    exclude: [],
+  })
 );
 
 // 2) Media: saytda haqiqatan ishlatiladigan fayllar.
@@ -69,6 +82,22 @@ for (const url of wanted) {
 }
 
 fs.writeFileSync(path.join(OUT, "media-sizes.json"), JSON.stringify(sizes));
+
+// 3) Server qismi: src/worker.js bitta faylga yig'iladi (Workers yig'uvchisi Node modullarini to'g'ri ulaydi)
+const BUNDLE = path.join(OUT, "bundle");
+execFileSync("npx", ["wrangler", "deploy", "--dry-run", "--outdir", BUNDLE, "-c", "wrangler.bundle.jsonc"], {
+  cwd: ROOT,
+  stdio: ["ignore", "ignore", "inherit"],
+});
+const extra = fs.readdirSync(BUNDLE).filter((f) => !/^(worker\.js(\.map)?|README\.md)$/.test(f));
+if (extra.length) throw new Error(`Kutilmagan qo'shimcha modullar: ${extra.join(", ")}`);
+// Pages tayyor faylda faqat "node:..." ko'rinishidagi importlarga ruxsat beradi: "util" -> "node:util"
+const bundled = fs
+  .readFileSync(path.join(BUNDLE, "worker.js"), "utf8")
+  .replace(/^(import [^"\n]*from )"([^":\n]+)";$/gm, (line, head, name) =>
+    builtinModules.includes(name) ? `${head}"node:${name}";` : line
+  );
+fs.writeFileSync(path.join(SITE, "_worker.js"), bundled);
 
 const count = (dir) => fs.readdirSync(dir, { recursive: true, withFileTypes: true }).filter((d) => d.isFile()).length;
 console.log(`dist-cf/site tayyor: ${count(SITE)} ta fayl, media ${(total / 1048576).toFixed(0)} MB`);

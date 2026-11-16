@@ -1,4 +1,4 @@
-// Cloudflare Workers kirish nuqtasi.
+// Cloudflare Pages kirish nuqtasi (dist-cf/site/_worker.js shu faylni ulaydi).
 //   - HTML, CSS, JS, rasmlar — statik fayl sifatida Cloudflare'ning o'zi beradi (dist-cf/site)
 //   - /api/*                 — shu yerdagi Express ilovasi (baza: DATABASE_URL siri)
 //   - videolar               — shu yerdan beriladi, chunki Safari videoni bo'laklab (Range) so'raydi,
@@ -79,8 +79,7 @@ export default {
       return env.ASSETS.fetch(new Request(new URL("/product", url), request));
     }
 
-    // Qolgan hamma narsa statik fayllarda topilmagan — 404 sahifasi
-    const page = await env.ASSETS.fetch(new Request(new URL("/404", url)));
-    return new Response(page.body, { status: 404, headers: page.headers });
+    // Qolgani — statik fayl (topilmasa, Cloudflare o'zi 404.html ni beradi)
+    return env.ASSETS.fetch(request);
   },
 };

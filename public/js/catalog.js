@@ -4,7 +4,6 @@ const params = new URLSearchParams(location.search);
 const state = {
   category: params.get("category") || "",
   size: params.get("size") || "",
-  sort: params.get("sort") || "new",
   q: params.get("q") || "",
   only: params.get("only") || "",
 };
@@ -14,14 +13,13 @@ mountLayout({ active: state.only === "new" ? "new" : "catalog" });
 const SIZES = ["S", "M", "L", "XL", "2XL", "3XL", "4XL"];
 $("#size").innerHTML = `<option value="">Razmer</option>` + SIZES.map((s) => `<option>${s}</option>`).join("");
 $("#size").value = state.size;
-$("#sort").value = state.sort;
 
 let categories = [];
 let seq = 0;
 
 function syncUrl() {
   const next = new URLSearchParams();
-  for (const [k, v] of Object.entries(state)) if (v && !(k === "sort" && v === "new")) next.set(k, v);
+  for (const [k, v] of Object.entries(state)) if (v) next.set(k, v);
   history.replaceState(null, "", next.size ? `?${next}` : location.pathname);
 }
 
@@ -84,10 +82,6 @@ $("#chips").addEventListener("click", (e) => {
 });
 $("#size").addEventListener("change", (e) => {
   state.size = e.target.value;
-  load();
-});
-$("#sort").addEventListener("change", (e) => {
-  state.sort = e.target.value;
   load();
 });
 

@@ -1,19 +1,12 @@
-// Cloudflare Workers sozlamalari. Joylash: npm run deploy:cf
+// Cloudflare Pages sozlamalari. Joylash: npm run deploy:cf
 // Sirlar (DATABASE_URL, JWT_SECRET, ADMIN_PASSWORD) bu faylda emas —
-// `npx wrangler secret put <NOM>` bilan qo'yiladi.
+// `npx wrangler pages secret put <NOM>` bilan qo'yiladi.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "doss-uz",
-  "main": "src/worker.js",
+  "pages_build_output_dir": "./dist-cf/site",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": "./dist-cf/site",
-    "binding": "ASSETS",
-    // API va videolar Worker orqali o'tadi (videolar — Safari uchun Range qo'llab-quvvatlashi kerak)
-    "run_worker_first": ["/api/*", "/media/video/*", "/media/preview/*", "/media/hero/*", "/media/admin/*"]
-  },
-  "observability": { "enabled": true },
   "vars": {
     "ADMIN_USERNAME": "admin"
   }

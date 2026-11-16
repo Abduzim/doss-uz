@@ -1,0 +1,8 @@
+// Faqat server qismini (src/worker.js) bitta faylga yig'ish uchun — scripts/build-cf.js ishlatadi.
+// Joylash sozlamalari wrangler.jsonc da.
+{
+  "name": "doss-uz-bundle",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"]
+}
