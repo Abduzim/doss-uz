@@ -126,3 +126,21 @@ npm run share   # 2-terminal: https://....trycloudflare.com ko'rinishidagi ochiq
 ```
 
 Link kompyuter yoniq va ikkala buyruq ishlab turgan paytda ochiladi; har safar qayta ishga tushirilganda yangi manzil beriladi.
+
+## Cloudflare'ga joylash (doimiy manzil)
+
+Sayt Cloudflare Workers'da turadi: https://doss-uz.school33-web.workers.dev
+
+```bash
+npm run deploy:cf   # yig'adi (dist-cf/) va Cloudflare'ga yuklaydi
+npm run dev:cf      # Cloudflare muhitini kompyuterda sinash (http://localhost:8787, sozlamalar .dev.vars da)
+```
+
+- Sahifalar, rasmlar va videolar — statik fayllar; `/api/*` — `src/worker.js` orqali shu Express ilovasi.
+- Sirlar `npx wrangler secret put <NOM>` bilan qo'yiladi: `DATABASE_URL`, `JWT_SECRET`, `ADMIN_PASSWORD`.
+- `DATABASE_URL` qo'yilmagan bo'lsa, katalog `src/data/catalog.js` dan o'qiladi (faqat ko'rish);
+  buyurtma va admin panel ishlashi uchun baza kerak.
+- Bulutdagi bazani tayyorlash (bir marta): `DATABASE_URL=<neon satri> npm run db:setup && DATABASE_URL=<neon satri> npm run db:seed`
+- Internetdagi versiyada admin panel orqali fayl yuklash o'chirilgan (Cloudflare'da disk yo'q).
+  Yangi rasm/video qo'shish: kompyuterda qo'shing, keyin `npm run deploy:cf`.
+- Cloudflare bitta fayl uchun 25 MB chegarasini qo'yadi — undan katta video yuklanmaydi.

@@ -40,13 +40,6 @@ CREATE TABLE IF NOT EXISTS product_media (
 
 CREATE INDEX IF NOT EXISTS product_media_product_idx ON product_media(product_id);
 
-CREATE TABLE IF NOT EXISTS admins (
-  id            SERIAL PRIMARY KEY,
-  username      VARCHAR(60) NOT NULL UNIQUE,
-  password_hash TEXT        NOT NULL,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
 CREATE TABLE IF NOT EXISTS orders (
   id            SERIAL PRIMARY KEY,
   customer_name VARCHAR(120) NOT NULL,

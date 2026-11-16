@@ -1,6 +1,4 @@
-import path from "node:path";
 import * as service from "../services/products.js";
-import { makeVideoExtras } from "../utils/media.js";
 import { HttpError } from "../utils/error.js";
 
 const idParam = (req) => {
@@ -28,18 +26,4 @@ export const update = async (req, res) => res.json(await service.updateProduct(i
 export const remove = async (req, res) => {
   await service.deleteProduct(idParam(req));
   res.status(204).end();
-};
-
-export const upload = async (req, res) => {
-  const url = (file) => (file ? `/media/admin/${path.basename(file)}` : null);
-  const files = [];
-  for (const f of req.files || []) {
-    if (!f.mimetype.startsWith("video/")) {
-      files.push({ kind: "image", url: url(f.path) });
-      continue;
-    }
-    const extras = await makeVideoExtras(f.path);
-    files.push({ kind: "video", url: url(f.path), poster_url: url(extras.poster), preview_url: url(extras.preview) });
-  }
-  res.status(201).json(files);
 };

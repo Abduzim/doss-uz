@@ -1,28 +1,44 @@
-import "dotenv/config";
+// Sozlamalar process.env dan o'qiladi:
+//  - kompyuterda: .env fayli (server.js / setup.js / seed.js boshida `dotenv/config` yuklaydi)
+//  - Cloudflare Workers'da: wrangler.jsonc dagi vars va `wrangler secret put` bilan qo'yilgan sirlar
+// Qiymatlar har safar so'ralganda o'qiladi, shuning uchun modul qachon yuklanganining ahamiyati yo'q.
+const e = (name, fallback = "") => process.env[name] || fallback;
+
+function dbConfig() {
+  const url = e("DATABASE_URL");
+  if (!url) {
+    return {
+      host: e("DB_HOST", "localhost"),
+      port: Number(e("DB_PORT")) || 5432,
+      user: e("DB_USER", "postgres"),
+      password: e("DB_PASSWORD") || undefined,
+      database: e("DB_NAME", "doss_uz"),
+    };
+  }
+  // Bulutdagi bazalar (Neon va b.) TLS talab qiladi, lokal server odatda yo'q
+  const local = /@(localhost|127\.0\.0\.1|\[::1\])[:/]/.test(url);
+  const ssl = e("DB_SSL") ? e("DB_SSL") === "true" : !local;
+  return { connectionString: url, ssl: ssl ? { rejectUnauthorized: false } : undefined, connectionTimeoutMillis: 10_000 };
+}
 
 export const env = {
-  port: Number(process.env.PORT) || 4000,
-  // Hostinglar (Railway, Render va b.) bazani bitta DATABASE_URL satri bilan beradi.
-  // U bo'lmasa, alohida DB_* o'zgaruvchilari ishlatiladi (lokal ishlash uchun).
-  db: process.env.DATABASE_URL
-    ? {
-        connectionString: process.env.DATABASE_URL,
-        ssl: process.env.DB_SSL === "false" ? false : { rejectUnauthorized: false },
-      }
-    : {
-        host: process.env.DB_HOST || "localhost",
-        port: Number(process.env.DB_PORT) || 5432,
-        user: process.env.DB_USER || "postgres",
-        password: process.env.DB_PASSWORD || undefined,
-        database: process.env.DB_NAME || "doss_uz",
-      },
-  jwtSecret: process.env.JWT_SECRET || "dev-secret-change-me",
-  admin: {
-    username: process.env.ADMIN_USERNAME || "admin",
-    password: process.env.ADMIN_PASSWORD || "",
+  get port() {
+    return Number(e("PORT")) || 4000;
   },
-  telegram: {
-    token: process.env.TELEGRAM_BOT_TOKEN || "",
-    chatId: process.env.TELEGRAM_CHAT_ID || "",
+  get db() {
+    return dbConfig();
+  },
+  // Baza sozlanganmi? Sozlanmagan bo'lsa katalog fayldan o'qiladi (services/catalogStatic.js)
+  get hasDb() {
+    return Boolean(e("DATABASE_URL") || e("DB_NAME"));
+  },
+  get jwtSecret() {
+    return e("JWT_SECRET", "dev-secret-change-me");
+  },
+  get admin() {
+    return { username: e("ADMIN_USERNAME", "admin"), password: e("ADMIN_PASSWORD") };
+  },
+  get telegram() {
+    return { token: e("TELEGRAM_BOT_TOKEN"), chatId: e("TELEGRAM_CHAT_ID") };
   },
 };

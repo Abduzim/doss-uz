@@ -1,45 +1,23 @@
 // src/data/catalog.js dagi katalogni bazaga yozadi (slug bo'yicha yangilaydi).
 //   npm run db:seed
+import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
-import { pool, transaction } from "../config/db.js";
+import { closePool, transaction } from "../config/db.js";
 import { slugify } from "../utils/slug.js";
-import { categories, products } from "../data/catalog.js";
+import { categories, products, NEW_SINCE } from "../data/catalog.js";
+import { buildMedia } from "../data/media.js";
 
 const UPLOADS = path.resolve(import.meta.dirname, "..", "..", "uploads");
-const NEW_SINCE = "2026-10-26"; // shu sanadan keyingi modellar "Yangi" belgisini oladi
 
-const imageUrl = (ref) => (ref.startsWith("p") ? `/media/photo/${ref}.jpg` : `/media/poster/${ref}.jpg`);
+// Katalogda ko'rsatilgan fayllar uploads/ da borligini tekshiramiz
 const missing = [];
-const check = (url) => {
-  if (!fs.existsSync(path.join(UPLOADS, url.replace(/^\/media\//, "")))) missing.push(url);
-  return url;
-};
-
-function buildMedia(p) {
-  const media = [{ kind: "image", url: check(imageUrl(p.cover)) }];
-  const [main, ...rest] = p.videos;
-
-  for (const v of p.videos) {
-    const poster = v === main && p.cover.startsWith(`${v}-`) ? p.cover : `${v}-2`;
-    media.push({
-      kind: "video",
-      url: check(`/media/video/${v}.mp4`),
-      poster_url: check(imageUrl(poster)),
-      preview_url: check(`/media/preview/${v}.mp4`),
-    });
+for (const p of products) {
+  for (const m of buildMedia(p)) {
+    for (const url of [m.url, m.poster_url, m.preview_url].filter(Boolean)) {
+      if (!fs.existsSync(path.join(UPLOADS, url.replace(/^\/media\//, "")))) missing.push(url);
+    }
   }
-  for (const ph of p.photos) media.push({ kind: "image", url: check(imageUrl(ph)) });
-
-  // Videodan olingan kadrlar galereyani to'ldiradi
-  const frames = [];
-  if (main) for (const n of [2, 1, 3, 4]) frames.push(`${main}-${n}`);
-  for (const v of rest) frames.push(`${v}-2`, `${v}-4`);
-  const room = Math.max(0, 5 - p.photos.length);
-  for (const f of frames.filter((f) => f !== p.cover).slice(0, room)) {
-    media.push({ kind: "image", url: check(imageUrl(f)) });
-  }
-  return media;
 }
 
 await transaction(async (db) => {
@@ -97,4 +75,4 @@ if (missing.length) {
   console.warn(`Diqqat: ${missing.length} ta media fayl topilmadi (uploads/ papkasini tekshiring):`);
   console.warn(missing.slice(0, 10).join("\n"));
 }
-await pool.end();
+await closePool();

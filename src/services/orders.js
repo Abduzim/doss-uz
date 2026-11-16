@@ -1,8 +1,13 @@
 import { query, transaction } from "../config/db.js";
 import { HttpError, notFound } from "../utils/error.js";
 import { notifyNewOrder } from "../utils/telegram.js";
+import { env } from "../config/env.js";
+import { site } from "../data/site.js";
 
 export async function createOrder(data) {
+  if (!env.hasDb) {
+    throw new HttpError(503, `Onlayn buyurtma hozircha yoqilmagan. Buyurtma uchun qo‘ng‘iroq qiling: ${site.phone}`);
+  }
   if (data.delivery === "delivery" && !data.address) {
     throw new HttpError(400, "Yetkazib berish manzilini kiriting");
   }
@@ -44,7 +49,9 @@ export async function createOrder(data) {
     return { ...rows[0], items };
   });
 
-  notifyNewOrder(order); // javobni kutmaymiz
+  // Kutamiz: Cloudflare Workers javobdan keyin qolgan ishlarni to'xtatib qo'yadi.
+  // notifyNewOrder xato tashlamaydi va ko'pi bilan 4 soniya kutadi.
+  await notifyNewOrder(order);
   return order;
 }
 

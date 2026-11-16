@@ -1,15 +1,17 @@
-import argon2 from "argon2";
-import jwt from "jsonwebtoken";
-import { query } from "../config/db.js";
 import { env } from "../config/env.js";
 import { HttpError } from "../utils/error.js";
+import { safeEqual, signToken } from "../utils/token.js";
 
+// Admin login/paroli sozlamalarda turadi: kompyuterda .env, Cloudflare'da sir (secret).
 export async function login({ username, password }) {
-  const { rows } = await query("SELECT * FROM admins WHERE username = $1", [username]);
-  const admin = rows[0];
-  const ok = admin && (await argon2.verify(admin.password_hash, password));
-  if (!ok) throw new HttpError(401, "Login yoki parol noto‘g‘ri");
+  const admin = env.admin;
+  if (!admin.password) throw new HttpError(503, "Admin paroli sozlanmagan (ADMIN_PASSWORD)");
 
-  const token = jwt.sign({ id: admin.id, username: admin.username }, env.jwtSecret, { expiresIn: "12h" });
+  // Ikkala solishtiruv ham har doim bajariladi
+  const okUser = safeEqual(username, admin.username);
+  const okPass = safeEqual(password, admin.password);
+  if (!okUser || !okPass) throw new HttpError(401, "Login yoki parol noto‘g‘ri");
+
+  const token = signToken({ username: admin.username }, env.jwtSecret, 12 * 60 * 60);
   return { token, username: admin.username };
 }

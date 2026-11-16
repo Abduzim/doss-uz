@@ -19,6 +19,9 @@ export const categories = [
   { slug: "poyabzal", name: "Poyabzal", description: "Charm va zamsha poyabzallar — obrazni yakunlaydigan detal." },
 ];
 
+// Shu sanadan keyingi modellar "Yangi" belgisini oladi
+export const NEW_SINCE = "2026-10-26";
+
 const STD = ["M", "L", "XL", "2XL", "3XL"];
 
 export const products = [

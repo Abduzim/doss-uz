@@ -1,4 +1,6 @@
-import { query, transaction } from "../config/db.js";
+import { query, transaction, withClient } from "../config/db.js";
+import { env } from "../config/env.js";
+import * as fallback from "./catalogStatic.js";
 import { HttpError, notFound } from "../utils/error.js";
 import { slugify } from "../utils/slug.js";
 
@@ -24,6 +26,7 @@ const ORDER = {
 };
 
 export async function listCategories() {
+  if (!env.hasDb) return fallback.listCategories();
   const { rows } = await query(`
     SELECT c.id, c.slug, c.name, c.description,
            COUNT(p.id)::int AS count,
@@ -42,6 +45,7 @@ export async function listCategories() {
 }
 
 export async function listProducts(f, { includeInactive = false } = {}) {
+  if (!env.hasDb) return fallback.listProducts(f);
   const where = [];
   const params = [];
   const add = (sql, value) => {
@@ -65,29 +69,35 @@ export async function listProducts(f, { includeInactive = false } = {}) {
   }
 
   const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
-  const total = await query(
-    `SELECT COUNT(*)::int AS n FROM products p JOIN categories c ON c.id = p.category_id ${whereSql}`,
-    params
-  );
-  const { rows } = await query(
-    `${SELECT} ${whereSql} ORDER BY ${ORDER[f.sort] || ORDER.new}
-     LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
-    [...params, f.limit ?? 120, f.offset ?? 0]
-  );
-  return { total: total.rows[0].n, items: rows };
+  // Ikkala so'rov bitta ulanishda bajariladi
+  return withClient(async (db) => {
+    const total = await db.query(
+      `SELECT COUNT(*)::int AS n FROM products p JOIN categories c ON c.id = p.category_id ${whereSql}`,
+      params
+    );
+    const { rows } = await db.query(
+      `${SELECT} ${whereSql} ORDER BY ${ORDER[f.sort] || ORDER.new}
+       LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      [...params, f.limit ?? 120, f.offset ?? 0]
+    );
+    return { total: total.rows[0].n, items: rows };
+  });
 }
 
 export async function getProductBySlug(slug) {
-  const { rows } = await query(`${SELECT} WHERE p.slug = $1 AND p.is_active`, [slug]);
-  if (!rows[0]) throw notFound("Mahsulot");
-  const product = rows[0];
-  const related = await query(
-    `${SELECT} WHERE p.is_active AND p.id <> $1
-     ORDER BY (p.category_id = $2) DESC, ABS(p.price - $3), p.published_at DESC
-     LIMIT 8`,
-    [product.id, product.category_id, product.price]
-  );
-  return { ...product, related: related.rows };
+  if (!env.hasDb) return fallback.getProductBySlug(slug);
+  return withClient(async (db) => {
+    const { rows } = await db.query(`${SELECT} WHERE p.slug = $1 AND p.is_active`, [slug]);
+    if (!rows[0]) throw notFound("Mahsulot");
+    const product = rows[0];
+    const related = await db.query(
+      `${SELECT} WHERE p.is_active AND p.id <> $1
+       ORDER BY (p.category_id = $2) DESC, ABS(p.price - $3), p.published_at DESC
+       LIMIT 8`,
+      [product.id, product.category_id, product.price]
+    );
+    return { ...product, related: related.rows };
+  });
 }
 
 export async function getProductById(id) {
