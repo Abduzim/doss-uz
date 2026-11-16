@@ -117,3 +117,12 @@ uploads/               media fayllar
 - `.env` da `JWT_SECRET` va `ADMIN_PASSWORD` ni yangi, kuchli qiymatga almashtiring.
 - Saytni HTTPS orqali bering (Nginx / Caddy orqasida).
 - `uploads/` papkasini serverga alohida ko‘chiring — u git da yo‘q.
+
+## Saytni vaqtincha internetga ochish (Cloudflare Tunnel)
+
+```bash
+npm run dev     # 1-terminal: sayt
+npm run share   # 2-terminal: https://....trycloudflare.com ko'rinishidagi ochiq link chiqadi
+```
+
+Link kompyuter yoniq va ikkala buyruq ishlab turgan paytda ochiladi; har safar qayta ishga tushirilganda yangi manzil beriladi.
