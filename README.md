@@ -3,14 +3,15 @@
 Fullstack onlayn do‘kon: katalog, mahsulot sahifasi (video + rasmlar), savat, buyurtma berish va admin panel.
 Katalog Doss_uz Telegram kanali eksportidan tuzilgan (77 ta mahsulot, 98 ta video, 31 ta rasm).
 
-- **Backend:** Node.js, Express 5, PostgreSQL (`pg`), Joi, JWT, argon2, multer
+- **Backend:** Node.js, Express 5, PostgreSQL (`pg`), Joi, JWT, multer
+- **Hosting:** Cloudflare Workers — https://doss-uz.school33-web.workers.dev
 - **Frontend:** sof HTML / CSS / JavaScript (ES modullar, build bosqichi yo‘q)
 
 ## Ishga tushirish
 
 ```bash
 npm install
-npm run db:setup   # bazani, jadvallarni va adminni yaratadi (.env dan o'qiydi)
+npm run db:setup   # bazani va jadvallarni yaratadi (.env dan o'qiydi)
 npm run db:seed    # katalogni bazaga yuklaydi
 npm run dev        # http://localhost:4000
 ```
@@ -30,7 +31,8 @@ Sozlamalar `.env` faylida (namuna — `.env.example`): baza ulanishi, admin logi
 ## Admin panel
 
 `/admin` — login va parol `.env` dagi `ADMIN_USERNAME` / `ADMIN_PASSWORD`.
-Parolni o‘zgartirish: `.env` da yangisini yozing va `npm run db:setup` ni qayta ishga tushiring.
+Parolni o‘zgartirish: kompyuterda — `.env` da yangisini yozib serverni qayta yoqing;
+internetdagi sayt uchun — `npx wrangler secret put ADMIN_PASSWORD`.
 
 - **Buyurtmalar:** ro‘yxat, holatini o‘zgartirish (yangi → tasdiqlangan → yo‘lda → yakunlangan / bekor qilingan).
 - **Mahsulotlar:** qo‘shish, tahrirlash, o‘chirish, yashirish; rasm va video yuklash.
