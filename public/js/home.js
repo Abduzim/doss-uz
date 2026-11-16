@@ -1,4 +1,4 @@
-import { $, $$, api, card, esc, getCategories, icons, mountLayout, rails, reveal, site, skeletonCards } from "/js/core.js";
+import { $, $$, api, card, esc, getCategories, icons, mountLayout, playPreviews, rails, reveal, site, skeletonCards } from "/js/core.js";
 
 mountLayout({ overHero: true });
 
@@ -42,13 +42,18 @@ getCategories()
 
 api("/products?only=new&limit=12")
   .then(({ items }) => {
-    $("#new-rail").innerHTML = items.map((p) => `<div>${card(p)}</div>`).join("");
+    // "Yangi kelganlar" bo'limida kartochkalar video bilan
+    $("#new-rail").innerHTML = items.map((p) => `<div>${card(p, { video: true })}</div>`).join("");
     rails();
+    playPreviews($("#new-rail"));
   })
   .catch(() => failed($("#new-rail")));
 
 api("/products?only=featured&limit=8")
-  .then(({ items }) => ($("#featured-grid").innerHTML = items.map(card).join("")))
+  .then(({ items }) => {
+    $("#featured-grid").innerHTML = items.map((p) => card(p, { video: true })).join("");
+    playPreviews($("#featured-grid"));
+  })
   .catch(() => failed($("#featured-grid")));
 
 reveal();

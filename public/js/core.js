@@ -138,13 +138,15 @@ export function mediaOf(p) {
   return { images, videos, cover, preview: videos[0]?.preview_url || null };
 }
 
-export function card(p) {
-  const { cover, images } = mediaOf(p);
+// video: true — kartochkada qisqa ovozsiz video o'ynaydi (playPreviews bilan birga ishlatiladi)
+export function card(p, { video = false } = {}) {
+  const { cover, images, preview } = mediaOf(p);
   const alt = images[1]; // sichqoncha kelganda ko'rinadigan ikkinchi rasm
   const href = `/catalog/${esc(p.slug)}`;
+  const extra = video && preview ? `data-preview="${esc(preview)}"` : alt ? `data-alt="${esc(alt)}"` : "";
   return `
     <article class="card">
-      <a class="card-media" href="${href}" aria-label="${esc(p.title)}" ${alt ? `data-alt="${esc(alt)}"` : ""}>
+      <a class="card-media" href="${href}" aria-label="${esc(p.title)}" ${extra}>
         <img src="${esc(cover)}" alt="${esc(p.title)}" loading="lazy" decoding="async">
       </a>
       ${p.is_new ? '<span class="badge">Yangi</span>' : ""}
@@ -155,6 +157,33 @@ export function card(p) {
         <div class="price">${priceHtml(p)}</div>
       </a>
     </article>`;
+}
+
+// [data-preview] kartochkalardagi videoni ekranda ko'ringanda o'ynatadi, chiqib ketganda to'xtatadi
+export function playPreviews(root = document) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const { target: media, isIntersecting } of entries) {
+        let video = $("video", media);
+        if (!isIntersecting) {
+          video?.pause();
+          continue;
+        }
+        if (!video) {
+          video = Object.assign(document.createElement("video"), { muted: true, loop: true, playsInline: true, preload: "auto" });
+          video.setAttribute("muted", "");
+          video.setAttribute("playsinline", "");
+          video.addEventListener("playing", () => video.classList.add("on"), { once: true });
+          video.src = media.dataset.preview;
+          media.append(video);
+        }
+        video.play().catch(() => {});
+      }
+    },
+    { threshold: 0.6 }
+  );
+  $$(".card-media[data-preview]", root).forEach((el) => io.observe(el));
 }
 
 export const priceHtml = (p) =>
